@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rizky Jayusman</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #ffffff;
+            --prompt-color: #00ff41;
+            --font-main: 'JetBrains Mono', monospace;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #terminal {
+            padding: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .output-line { margin-bottom: 8px; white-space: pre-wrap; line-height: 1.4; }
+        .command-line { color: var(--prompt-color); font-weight: bold; }
+        
+        .input-area {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        #command-input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-size: 16px;
+            outline: none;
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+
+        .ascii-art {
+            color: var(--text-color);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="terminal">
+    <div id="history">
+        <pre class="ascii-art">
+#     ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ ____ 
+#    ||R |||I |||Z |||K |||Y |||       |||J |||A |||Y |||U |||S |||M |||A |||N ||
+#    ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__|||__||
+#    |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\| v1.0.0
+        </pre>
+        <div class="output-line"></div>
+        <div class="output-line">Type 'help' to see available commands.</div>
+        <br>
+    </div>
+
+    <div class="input-area">
+        <span class="command-line">rizkyj@user:~$</span>
+        <input type="text" id="command-input" autofocus spellcheck="false">
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('command-input');
+    const history = document.getElementById('history');
+    const terminal = document.getElementById('terminal');
+
+    const workHistory = [
+        {
+            date: "Sep 2025 - PRESENT",
+            company: "Doctic",
+            role: "Backend Engineer",
+            desc: [],
+            tech: ["Spring Boot", "AWS"]
+        },
+        {
+            date: "Dec 2024 - PRESENT",
+            company: "Metranet",
+            role: "Backend Engineer at Cazbox",
+            desc: [
+                "Spearheaded the middleware PPOB rewrite project, serving as the primary Software Architect to modernize the system. This involved conducting deep-dive exploration of legacy bottlenecks, designing a scalable modular architecture, and producing comprehensive technical documentation (API Specs, ER Diagram, and System Design) to ensure long-term maintainability.",
+                "Directed the full software development lifecycle for the rewrite system, including selecting the optimal tech stack, implementing design patterns, and ensuring the new system could handle high-concurrency transactions common in PPOB services.",
+                "Collaborated cross-functionally with the Product Owner, QA, Manager, and Frontend teams to align technical execution with business requirements. This synergy ensured the delivery of new features that were not only technically sound but also strategically aligned with the company’s product roadmap.",
+                "Acted as the technical point of contact for production stability, demonstrating a strong passion for identifying and resolving critical production bugs. By implementing robust monitoring and logging, reduced system downtime and improved the overall reliability of the PPOB platform."
+            ],
+            tech: ["Spring Boot", "AWS", "Clean Architecture"]
+        },
+        {
+            date: "Mar 2023 - Dec 2024",
+            company: "Metranet",
+            role: "Backend Engineer at Xooply",
+            desc: [],
+            tech: ["Spring Boot", "GCP"]
+        },
+        {
+            date: "Jul 2020 - Mar 2023",
+            company: "Metranet",
+            role: "Backend Engineer at IT Department",
+            desc: [
+                "Led the integration of various partner APIs, including Netflix Partner Integration, which improved content delivery and provided a more seamless user experience. This involved coordinating with external partners and ensuring smooth implementation to enhance overall platform functionality.",
+                "Implemented and managed multiple payment gateways, such as Xendit, QREN, and Upoint. This expanded payment options significantly, increasing user convenience and satisfaction by offering a broader range of payment methods and ensuring secure transactions.",
+                "Oversaw the proactive maintenance and optimization of the company's platform, including continuous performance monitoring, debugging, and system refinements. This approach ensured high reliability and performance, allowing the platform to adapt to new requirements and remain stable and efficient."
+            ],
+            tech: ["Spring Boot"]
+        },
+        {
+            date: "Jan 2020 - PRESENT",
+            company: "Freelance",
+            role: "Freelance Backend Engineer",
+            desc: [],
+            tech: ["Spring Boot", "Java", "Golang"]
+        },
+        {
+            date: "Aug 2018 - Jul 2020",
+            company: "BLANJA.com",
+            role: "Freelance Backend Engineer",
+            desc: [
+                "Collaborated closely with the Product Owner, QA team, Team Lead, and other team members in an agile environment to develop and deliver new products. This collaborative approach ensured that all aspects of product development were aligned with business goals and quality standards.",
+                "Implemented import tax regulations in the e-commerce system to ensure compliance with local laws and regulations. This integration was crucial for adhering to government requirements and avoiding potential legal issues.",
+                "Developed key features such as a currency converter, eBay API integration, and OAuth2 authentication for microservices in ebay.blanja.com v2. These enhancements improved user experience and system efficiency by enabling seamless currency conversions, integrating with eBay's services, and ensuring secure authentication for users.",
+                "Demonstrated a strong passion for maintaining system stability by proactively identifying and resolving critical production bugs. This commitment ensured minimal downtime and a seamless end-user experience, even in high-pressure environments."
+            ],
+            tech: ["Spring Boot", "Java", "Golang"]
+        },
+        {
+            date: "Aug 2018 - Mar 2019",
+            company: "Spektakel.id",
+            role: "Frontend Engineer",
+            desc: [
+                "Created frontend code for clients and integrated it with backend systems, ensuring that the user experiences were seamless and cohesive across both frontend and backend components.",
+                "Revamped the frontend of Spektakel v3 using NuxtJS and Bulma, which resulted in a modern, responsive design. This update improved the visual appeal and usability of the application, enhancing the overall user experience.",
+            ],
+            tech: ["NuxtJS", "Bulma", "Vue.js"]
+        },
+        {
+            date: "May 2018 - Jul 2018",
+            company: "Arkademy (Pijar Mahir)",
+            role: "Frontend Engineer",
+            desc: [],
+            tech: ["Wordpress", "Bootstrap"]
+        }
+    ];
+
+    const projectHistory = [
+        {
+            name: "Doctic",
+            desc: "A telemedicine platform connecting patients with healthcare professionals for online consultations and medical services.",
+            tech: ["REST APIs", "Clean Architecture", "Spring Boot", "Spring Security"]
+        },
+        {
+            name: "BlocX Website",
+            desc: "Official website for BlocX, showcasing their services and portfolio.",
+            tech: ["Laravel", "Laravel UI", "TailwindCSS", "PHP", "MySQL"]
+        },
+        {
+            name: "Project Management Mobile App for Hutama Karya",
+            desc: "A mobile application designed to facilitate project management tasks for Hutama Karya employees.",
+            tech: ["REST APIs", "PostgreSQL", "Spring Boot", "Spring Security"]
+        },
+        {
+            name: "Indopedia.id",
+            desc: "B2B E-commerce platform connecting suppliers and retailers in Indonesia.",
+            tech: ["REST APIs", "PostgreSQL", "Spring Boot", "Spring Security"]
+        }
+    ];
+
+    const commands = {
+        help: () => `Available commands:
+  whoami    - Display profile information
+  works     - Show selected professional work and contributions
+  projects  - Show personal, open-source, and side projects
+  clear     - Clear the terminal
+  help      - Show this menu`,
+        
+        whoami: () => `Name: Rizky Jayusman
+Role: Backend Engineer`,
+
+        projects: () => {
+            let output = "";
+            projectHistory.forEach(project => {
+                output += `<span style="color: #fff">*</span> <b>${project.name}</b>\n`;
+                output += `<span style="color: #666">|</span>   <span style="color: #eee">${project.desc}</span>\n`;
+                output += `<span style="color: #666">|</span>   - Tech Stack: ${project.tech.map(t => `[${t}]`).join(' ')}\n`;
+                output += `<span style="color: #666">|</span>\n`;
+            });
+            return output;
+        },
+
+        clear: () => {
+            history.innerHTML = '';
+            return '';
+        },
+
+        works: () => {
+            let output = "";
+            workHistory.forEach((job, index) => {
+                output += `<span style="color: #fff">*</span> <span style="color: #fff">[${job.date}]</span> - <b>${job.company}</b>\n`;
+                output += `<span style="color: #666">|</span>   <span style="color: #eee">${job.role}</span>\n`;
+                job.desc.forEach(descLine => {
+                    output += `<span style="color: #666">|</span>  - ${descLine}\n`;
+                });
+                output += `<span style="color: #666">|</span>   - Stack: ${job.tech.map(t => `[${t}]`).join(' ')}\n`;
+                if (index !== workHistory.length - 1) output += `<span style="color: #666">|</span>\n`;
+            });
+            return output;
+        },
+    };
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value.toLowerCase().trim();
+            const response = commands[val] ? commands[val]() : `Command not found: ${val}. Type 'help' for assistance.`;
+            
+            const line = document.createElement('div');
+            line.innerHTML = `<div class="command-line">rizkyj@user:~$ ${val}</div><div class="output-line">${response}</div><br>`;
+            history.appendChild(line);
+            
+            input.value = '';
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+    });
+
+    document.addEventListener('click', () => input.focus());
+</script>
+
+</body>
+</html>
